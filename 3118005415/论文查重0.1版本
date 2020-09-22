@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import copy
 import jieba
+import sys
 #定义余弦相似度函数
 def get_cos(x,y):
     myx = np.array(x)
@@ -15,42 +16,42 @@ def result(num):
     num_str = str(num).split('.')
     num = float(num_str[0]+'.'+num_str[1][0:2])  
     return num
-#输入论文原文的地址
-addr1 = input('请输入论文原文的绝对路径：')
+#把标点符号以及特殊符号整理出来作为停用词
+stop0 = '[’!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+ 。，？·【】；‘、“”《》（）！·……'
+stop_cut = jieba.cut(stop0)
 #导入论文原文并分词以及计算每个词的词频
-text1 = open(addr1,'r',encoding='UTF-8')
+text1 = open(sys.argv[1],'r',encoding='UTF-8')
 data1 = text1.read()
 text1.close()
 word1 = jieba.cut(data1)
 all_words={}
 for myword in word1:
-    all_words.setdefault(myword,0)
-    all_words[myword]+=1
-#输入抄袭版论文的地址
-addr2 = input('请输入抄袭版论文的绝对路径：')
+    if myword not in stop_cut:
+        all_words.setdefault(myword,0)
+        all_words[myword]+=1
 #导入抄袭版论文并分词以及计算每个词的词频
-text2 = open(addr2,'r',encoding='UTF-8')
+text2 = open(sys.argv[2],'r',encoding='UTF-8')
 data2 = text2.read()
 text2.close()
 word2 = jieba.cut(data2)
 compare_word = copy.deepcopy(all_words)
 for myword in word2:
-    if myword in compare_word:
-        compare_word[myword]+=1
+    if myword not in stop_cut:
+        if myword in compare_word:
+            compare_word[myword]+=1
 #计算两篇论文的余弦相似度
-sample_data=[]
-compare_data=[]
+sample_data = []
+compare_data = []
 for key in all_words.keys():
     sample_data.append(all_words[key])
     compare_data.append(compare_word[key])
-similarity=get_cos(sample_data,compare_data)
+similarity = get_cos(sample_data,compare_data)
 result1 = result(similarity)
-outputfile = input('请输入答案文件的地址：')
-with open(outputfile,'w') as file_object:
+with open(sys.argv[3],'w') as file_object:
     file_object.write(str(result1))
 file_object.close()
 print('两论文的相似度为：')
-with open(outputfile) as file_object:
+with open(sys.argv[3]) as file_object:
     contents = file_object.read()
     print(contents)
 file_object.close()
