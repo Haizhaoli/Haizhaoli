@@ -1,0 +1,65 @@
+import numpy as np
+import copy
+import jieba
+import sys
+
+
+# 定义余弦相似度函数
+def get_cos(x, y):
+    myx = np.array(x)
+    myy = np.array(y)
+    cos1 = np.sum(myy * myx)
+    cos2 = np.sqrt(sum(myy * myy))
+    cos3 = np.sqrt(sum(myx * myx))
+    return cos1 / float(cos2 * cos3)
+
+
+# 定义不四舍五入保留小数点后两位的方法
+def result(num):
+    num_str = str(num).split('.')
+    num = float(num_str[0] + '.' + num_str[1][0:2])
+    return num
+
+
+# 导入论文原文并分词以及计算每个词的词频
+try:
+    with open(sys.argv[1], 'r', encoding='UTF-8') as text1:
+        data1 = text1.read()
+        text1.close()
+except FileNotFoundError:
+    msg = "Sorry,the file" + sys.argv[1] + " does not exist."
+    print(msg)
+word1 = jieba.cut(data1)
+all_words = {}
+for myword in word1:
+    all_words.setdefault(myword, 0)
+    all_words[myword] += 1
+# 导入抄袭版论文并分词以及计算每个词的词频
+try:
+    with open(sys.argv[2], 'r', encoding='UTF-8') as text2:
+        data2 = text2.read()
+        text2.close()
+except FileNotFoundError:
+    msg = "Sorry,the file" + sys.argv[2] + " does not exist."
+    print(msg)
+word2 = jieba.cut(data2)
+compare_word = copy.deepcopy(all_words)
+for myword in word2:
+    if myword in compare_word:
+        compare_word[myword] += 1
+# 计算两篇论文的余弦相似度
+sample_data = []
+compare_data = []
+for key in all_words.keys():
+    sample_data.append(all_words[key])
+    compare_data.append(compare_word[key])
+similarity = get_cos(sample_data, compare_data)
+result1 = result(similarity)
+with open(sys.argv[3], 'w') as file_object:
+    file_object.write(str(result1))
+file_object.close()
+print('两论文的相似度为：')
+with open(sys.argv[3]) as file_object:
+    contents = file_object.read()
+    print(contents)
+file_object.close()
