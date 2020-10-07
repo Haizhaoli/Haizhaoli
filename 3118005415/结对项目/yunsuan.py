@@ -1,3 +1,4 @@
+from fractions import Fraction
 
 
 def formula_change(exp):  # 中缀表达式转换成后缀表达式
@@ -11,7 +12,7 @@ def formula_change(exp):  # 中缀表达式转换成后缀表达式
     }  # 设置运算符号的优先级
     formula_stack = []  # 存放后缀表达式的栈
     symbols_stack = []  # 存放操作符的栈
-    ch = exp.spilt('')
+    ch = exp.split(' ')
     for item in ch:
         if item in ['+', '-', '×', '÷']:  # 转换过程中遇到运算符
             while len(symbols_stack) >= 0:
@@ -46,13 +47,25 @@ def formula_result(exp):
     for item in exp:
         if item in ['+', '-', '×', '÷']:
             y = formula_value.pop()
-            x = formula_value.pop() # 取出运算符的前两个数字用作运算
+            x = formula_value.pop()  # 取出运算符的前两个数字用作运算
             result = calculate(x, y, item)
-            if result is False or result < 0:   # 排除计算过程中产生负数以及除数为0的异常情况
+            if result is False or result < 0:  # 排除计算过程中产生负数以及除数为0的异常情况
                 return False
             formula_value.append(result)
         else:
-            formula_value.append(int(item)) # 当item并非运算符时，直接进行入栈操作
+            if item.find('/') > 0:
+                left = 0
+                if item.find("'") > 0:
+                    num = item.split("'")
+                    left = int(num[0])
+                    right = num[1]
+                else:
+                    right = item
+                num = right.split("/")
+                result = Fraction(left * int(num[1]) + int(num[0]), int(num[1]))
+                formula_value.append(result)
+            else:
+                formula_value.append(int(item))
     return formula_value[0]
 
 
@@ -67,3 +80,15 @@ def calculate(x, y, symbol):
         if y == 0:
             return False
         return x / y
+
+
+if __name__ == '__main__':
+    exam = "( 9 + 5 ) × 3'5/6"
+    exam1 = '3/5 × 9/10'
+    result1 = formula_change(exam)
+    result2 = formula_change(exam1)
+    print(result1)
+    print(result2)
+    print(formula_result(result1))
+    print(formula_result(result2))
+
