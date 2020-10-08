@@ -61,11 +61,11 @@ def formula_result(exp):
                     right = num[1]
                 else:
                     right = item
-                num = right.split("/")
+                num = right.split('/')
                 result = Fraction(left * int(num[1]) + int(num[0]), int(num[1]))
                 formula_value.append(result)
             else:
-                formula_value.append(int(item))
+                formula_value.append(Fraction(int(item), 1))
     return formula_value[0]
 
 
@@ -84,11 +84,10 @@ def calculate(x, y, symbol):
 
 if __name__ == '__main__':
     exam = "( 9 + 5 ) × 3'5/6"
-    exam1 = '3/5 × 9/10'
+    exam1 = "2 + 1'3/4 × 3"
     result1 = formula_change(exam)
     result2 = formula_change(exam1)
     print(result1)
     print(result2)
     print(formula_result(result1))
     print(formula_result(result2))
-
