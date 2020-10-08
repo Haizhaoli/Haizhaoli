@@ -65,7 +65,7 @@ def formula_result(exp):
                 result = Fraction(left * int(num[1]) + int(num[0]), int(num[1]))
                 formula_value.append(result)
             else:
-                formula_value.append(Fraction(int(item), 1))
+                formula_value.append(int(item))
     return formula_value[0]
 
 
