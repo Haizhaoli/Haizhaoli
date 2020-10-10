@@ -1,12 +1,25 @@
 import re
 from yunsuan import formula_change, formula_result
+from fractions import Fraction
 
 
 def formula_answer(formula_list):
     for i, formula in enumerate(formula_list):
         formula_str = str(i + 1)
         formula_value = str(formula_result(formula_change(formula))) + '\n'
-        answer = formula_str + ': ' + formula_value
+        if formula_value.find('/') > 0:
+            num = formula_value.split('/')
+            left = int(num[0])
+            right = int(num[1])
+            if left < right:
+                answer = formula_str + ':' + formula_value
+            else:
+                first = left // right
+                numerator = left % right
+                formula_value = str(first) + "'" + str(Fraction(numerator, right)) +'\n'
+                answer = formula_str + ':' + formula_value
+        else:
+            answer = formula_str + ':' + formula_value
         with open('Answer.txt', 'a+', encoding='utf-8') as file:
             file.write(answer)
 
