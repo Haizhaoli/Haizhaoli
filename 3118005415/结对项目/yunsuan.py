@@ -79,7 +79,7 @@ def calculate(x, y, symbol):
     if symbol == '÷':
         if y == 0:
             return False
-        return x / y
+        return Fraction(x, y)
 
 
 if __name__ == '__main__':
