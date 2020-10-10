@@ -1,5 +1,6 @@
 from random import randint
 from fractions import Fraction
+from yunsuan import formula_result, formula_change
 
 
 class configuration:
@@ -81,10 +82,12 @@ class construction:
                 formulas = " ".join(self.construct_formula_parentheses(formula, num_number))
             else:
                 formulas = " ".join(formula)
-
-            formula_list.append(formulas)
-            print('第%d道题' % int(i + 1))
-            i = i + 1
+            if formula_result(formula_change(formulas)) is False:
+                continue
+            else:
+                formula_list.append(formulas)
+                print('第%d道题' % int(i + 1))
+                i = i + 1
 
         return formula_list
 
