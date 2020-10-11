@@ -4,6 +4,9 @@ from fractions import Fraction
 
 
 def formula_answer(formula_list):
+    with open('Answer.txt', 'r+', encoding='utf-8') as file:
+        file.truncate()
+        file.close()
     for i, formula in enumerate(formula_list):
         formula_str = str(i + 1)
         formula_value = str(formula_result(formula_change(formula))) + '\n'
@@ -16,12 +19,13 @@ def formula_answer(formula_list):
             else:
                 first = left // right
                 numerator = left % right
-                formula_value = str(first) + "'" + str(Fraction(numerator, right)) +'\n'
+                formula_value = str(first) + "'" + str(Fraction(numerator, right)) + '\n'
                 answer = formula_str + ':' + formula_value
         else:
             answer = formula_str + ':' + formula_value
         with open('Answer.txt', 'a+', encoding='utf-8') as file:
             file.write(answer)
+    file.close()
 
 
 def check(exercisefile, answerfile):
@@ -47,9 +51,25 @@ def check(exercisefile, answerfile):
     try:
         with open(answerfile, 'r', encoding='utf-8') as file:
             for i, line in enumerate(file):
-                answer_str = re.findall(r'\d+: (.*) = \n', line)
-                if answer_str:
-                    answer = answer_str[0]
+                part = line.split(':')
+                answer_str = part[1]
+                if answer_str.find('/') > 0:
+                    left = 0
+                    if answer_str.find("'") > 0:
+                        num = answer_str.split("'")
+                        left = int(num[0])
+                        right = num[1]
+                    else:
+                        right = answer_str
+                    num = right.split('/')
+                    result = Fraction(left * int(num[1]) + int(num[0]), int(num[1]))
+                else:
+                    result = int(answer_str)
+                if result >= 0:
+                    if result == 0:
+                        answer = "0"
+                    else:
+                        answer = str(result)
                 else:
                     continue
                 if answer == exercise_result[i]:
@@ -65,3 +85,9 @@ def check(exercisefile, answerfile):
             file.write(wrong_str)
     except IOError:
         print('请查看输入的路径是否正确')
+
+
+if __name__ == '__main__':
+    exp_file = r'Exercises.txt'
+    ans_file = r'Answer.txt'
+    check(exp_file, ans_file)
