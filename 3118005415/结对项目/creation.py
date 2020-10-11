@@ -94,10 +94,14 @@ class construction:
     def formula_output(self, formula_list):
         if not formula_list:
             return
+        with open('Exercises.txt', "r+", encoding='utf-8') as file:
+            file.truncate()
+            file.close()
         for i, formula in enumerate(formula_list):
             formula_str = str(i + 1) + ': ' + formula + ' = ' + "\n"
             with open('Exercises.txt', "a+", encoding='utf-8') as file:
                 file.write(formula_str)
+        file.close()
 
 
 if __name__ == '__main__':
