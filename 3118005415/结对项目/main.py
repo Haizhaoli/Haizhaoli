@@ -35,7 +35,7 @@ def main():
         formula_answer(result_list)
         print('**** 所需题目已生成完毕 ****')
 
-    if args.exercise_arg:
+    elif args.exercise_arg:
         if args.answer_arg:
             check(args.exercise_arg, args.answer_arg)
         else:
